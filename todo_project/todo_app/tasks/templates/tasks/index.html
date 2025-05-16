@@ -1,0 +1,55 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Tasks - Todo App{% endblock %}
+
+{% block content %}
+<section class="task-filters">
+    <h2>My Tasks</h2>
+    <div class="filter-options">
+        <a href="{% url 'task_list' %}?status=all" class="filter-option {% if status_filter == 'all' %}active{% endif %}">All</a>
+        <a href="{% url 'task_list' %}?status=active" class="filter-option {% if status_filter == 'active' %}active{% endif %}">Active</a>
+        <a href="{% url 'task_list' %}?status=completed" class="filter-option {% if status_filter == 'completed' %}active{% endif %}">Completed</a>
+    </div>
+</section>
+
+<section class="tasks-container">
+    {% if tasks %}
+        <ul class="task-list">
+            {% for task in tasks %}
+            <li class="task-item {% if task.status == 'completed' %}completed{% endif %} {% if task.is_due_soon %}due-soon{% endif %} {% if task.is_overdue %}overdue{% endif %}">
+                <div class="task-content">
+                    <h3>{{ task.title }}</h3>
+                    {% if task.description %}<p>{{ task.description }}</p>{% endif %}
+                    
+                    <div class="task-meta">
+                        <span class="task-status status-{{ task.status }}">{{ task.get_status_display }}</span>
+                        {% if task.due_date %}
+                            <span class="task-due-date">
+                                Due: {{ task.due_date|date:"M d, Y" }}
+                                {% if task.is_overdue %}
+                                    <span class="overdue-label">Overdue!</span>
+                                {% elif task.is_due_soon %}
+                                    <span class="due-soon-label">Due soon!</span>
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="task-actions">
+                    {% if task.status != 'completed' %}
+                    <a href="{% url 'complete_task' task.id %}" class="button complete-btn" title="Mark as Complete">✓</a>
+                    {% endif %}
+                    <a href="{% url 'edit_task' task.id %}" class="button edit-btn" title="Edit Task">✎</a>
+                    <a href="{% url 'delete_task' task.id %}" class="button delete-btn" title="Delete Task" onclick="return confirm('Are you sure you want to delete this task?')">×</a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="no-tasks">
+            <p>No tasks found. <a href="{% url 'add_task' %}">Add your first task!</a></p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

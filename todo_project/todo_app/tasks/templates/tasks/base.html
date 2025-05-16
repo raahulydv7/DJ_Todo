@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Todo App{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📝 Todo App</h1>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'task_list' %}">Tasks</a></li>
+                    <li><a href="{% url 'add_task' %}" class="button">Add Task</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; {% now "Y" %} Modern Todo App. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
